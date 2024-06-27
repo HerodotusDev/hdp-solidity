@@ -4,6 +4,11 @@ pragma solidity ^0.8.4;
 /// @notice Datalake type.
 enum DatalakeCode {
     BlockSampled,
-    TransactionsInBlock,
-    IterativeDynamicLayout
+    TransactionsInBlock
+}
+
+/// @notice Chain type.
+enum ChainType {
+    Ethereum,
+    EthereumSepolia,
 }
