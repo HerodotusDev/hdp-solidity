@@ -30,55 +30,44 @@ struct TransactionsInBlockDatalake {
 library TransactionsInBlockDatalakeCodecs {
     /// @dev Encodes a TransactionsInBlockDatalake.
     /// @param datalake The TransactionsInBlockDatalake to encode.
-    function encode(
-        TransactionsInBlockDatalake memory datalake
-    ) internal pure returns (bytes memory) {
-        return
-            abi.encode(
-                TaskCode.Datalake,
-                DatalakeCode.TransactionsInBlock,
-                datalake.chainId,
-                datalake.targetBlock,
-                datalake.startIndex,
-                datalake.endIndex,
-                datalake.increment,
-                datalake.includedTypes,
-                datalake.sampledProperty,
-                datalake.compute.aggregateFnId,
-                datalake.compute.operatorId,
-                datalake.compute.valueToCompare
-            );
+    function encode(TransactionsInBlockDatalake memory datalake) internal pure returns (bytes memory) {
+        return abi.encode(
+            TaskCode.Datalake,
+            DatalakeCode.TransactionsInBlock,
+            datalake.chainId,
+            datalake.targetBlock,
+            datalake.startIndex,
+            datalake.endIndex,
+            datalake.increment,
+            datalake.includedTypes,
+            datalake.sampledProperty,
+            datalake.compute.aggregateFnId,
+            datalake.compute.operatorId,
+            datalake.compute.valueToCompare
+        );
     }
 
     /// @dev Get the commitment of a TransactionsInBlockDatalake.
     /// @param datalake The TransactionsInBlockDatalake to commit.
-    function commit(
-        TransactionsInBlockDatalake memory datalake
-    ) internal pure returns (bytes32) {
+    function commit(TransactionsInBlockDatalake memory datalake) internal pure returns (bytes32) {
         return keccak256(encode(datalake));
     }
 
     /// @dev Encodes a sampled property for a transaction property.
     /// @param txPropId The field from rlp decoded block tx.
-    function encodeSampledPropertyForTxProp(
-        uint8 txPropId
-    ) internal pure returns (bytes memory) {
+    function encodeSampledPropertyForTxProp(uint8 txPropId) internal pure returns (bytes memory) {
         return abi.encodePacked(uint8(1), txPropId);
     }
 
     /// @dev Encodes a sampled property for an transaction receipt property.
     /// @param txReceiptPropId The field from rlp decoded block transaction receipt.
-    function encodeSampledPropertyFortxReceipt(
-        uint8 txReceiptPropId
-    ) internal pure returns (bytes memory) {
+    function encodeSampledPropertyFortxReceipt(uint8 txReceiptPropId) internal pure returns (bytes memory) {
         return abi.encodePacked(uint8(2), txReceiptPropId);
     }
 
     /// @dev Decodes a TransactionsInBlockDatalake.
     /// @param data The encoded TransactionsInBlockDatalake.
-    function decode(
-        bytes memory data
-    ) internal pure returns (TransactionsInBlockDatalake memory) {
+    function decode(bytes memory data) internal pure returns (TransactionsInBlockDatalake memory) {
         (
             ,
             ,
@@ -93,36 +82,22 @@ library TransactionsInBlockDatalakeCodecs {
             uint8 operatorId,
             uint256 valueToCompare
         ) = abi.decode(
-                data,
-                (
-                    TaskCode,
-                    DatalakeCode,
-                    uint256,
-                    uint256,
-                    uint256,
-                    uint256,
-                    uint256,
-                    uint256,
-                    bytes,
-                    uint8,
-                    uint8,
-                    uint256
-                )
-            );
-        return
-            TransactionsInBlockDatalake({
-                chainId: chainId,
-                compute: Compute({
-                    aggregateFnId: AggregateFn(aggregateFnId),
-                    operatorId: Operator(operatorId),
-                    valueToCompare: valueToCompare
-                }),
-                targetBlock: targetBlock,
-                startIndex: startIndex,
-                endIndex: endIndex,
-                increment: increment,
-                includedTypes: includedTypes,
-                sampledProperty: sampledProperty
-            });
+            data,
+            (TaskCode, DatalakeCode, uint256, uint256, uint256, uint256, uint256, uint256, bytes, uint8, uint8, uint256)
+        );
+        return TransactionsInBlockDatalake({
+            chainId: chainId,
+            compute: Compute({
+                aggregateFnId: AggregateFn(aggregateFnId),
+                operatorId: Operator(operatorId),
+                valueToCompare: valueToCompare
+            }),
+            targetBlock: targetBlock,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            increment: increment,
+            includedTypes: includedTypes,
+            sampledProperty: sampledProperty
+        });
     }
 }

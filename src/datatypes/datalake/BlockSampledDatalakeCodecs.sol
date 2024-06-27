@@ -26,65 +26,50 @@ struct BlockSampledDatalake {
 library BlockSampledDatalakeCodecs {
     /// @dev Encodes a BlockSampledDatalake.
     /// @param datalake The BlockSampledDatalake to encode.
-    function encode(
-        BlockSampledDatalake memory datalake
-    ) internal pure returns (bytes memory) {
-        return
-            abi.encode(
-                TaskCode.Datalake,
-                DatalakeCode.BlockSampled,
-                datalake.chainId,
-                datalake.blockRangeStart,
-                datalake.blockRangeEnd,
-                datalake.increment,
-                datalake.sampledProperty,
-                datalake.compute.aggregateFnId,
-                datalake.compute.operatorId,
-                datalake.compute.valueToCompare
-            );
+    function encode(BlockSampledDatalake memory datalake) internal pure returns (bytes memory) {
+        return abi.encode(
+            TaskCode.Datalake,
+            DatalakeCode.BlockSampled,
+            datalake.chainId,
+            datalake.blockRangeStart,
+            datalake.blockRangeEnd,
+            datalake.increment,
+            datalake.sampledProperty,
+            datalake.compute.aggregateFnId,
+            datalake.compute.operatorId,
+            datalake.compute.valueToCompare
+        );
     }
 
     /// @dev Get the commitment of a BlockSampledDatalake.
     /// @param datalake The BlockSampledDatalake to commit.
-    function commit(
-        BlockSampledDatalake memory datalake
-    ) internal pure returns (bytes32) {
+    function commit(BlockSampledDatalake memory datalake) internal pure returns (bytes32) {
         return keccak256(encode(datalake));
     }
 
     /// @dev Encodes a sampled property for a header property.
     /// @param headerPropId The header field from rlp decoded block header.
-    function encodeSampledPropertyForHeaderProp(
-        uint8 headerPropId
-    ) internal pure returns (bytes memory) {
+    function encodeSampledPropertyForHeaderProp(uint8 headerPropId) internal pure returns (bytes memory) {
         return abi.encodePacked(uint8(1), headerPropId);
     }
 
     /// @dev Encodes a sampled property for an account property.
     /// @param account The account address.
     /// @param propertyId The account field from rlp decoded account.
-    function encodeSampledPropertyForAccount(
-        address account,
-        uint8 propertyId
-    ) internal pure returns (bytes memory) {
+    function encodeSampledPropertyForAccount(address account, uint8 propertyId) internal pure returns (bytes memory) {
         return abi.encodePacked(uint8(2), account, propertyId);
     }
 
     /// @dev Encodes a sampled property for a storage.
     /// @param account The account address.
     /// @param slot The storage key.
-    function encodeSampledPropertyForStorage(
-        address account,
-        bytes32 slot
-    ) internal pure returns (bytes memory) {
+    function encodeSampledPropertyForStorage(address account, bytes32 slot) internal pure returns (bytes memory) {
         return abi.encodePacked(uint8(3), account, slot);
     }
 
     /// @dev Decodes a BlockSampledDatalake.
     /// @param data The encoded BlockSampledDatalake.
-    function decode(
-        bytes memory data
-    ) internal pure returns (BlockSampledDatalake memory) {
+    function decode(bytes memory data) internal pure returns (BlockSampledDatalake memory) {
         (
             ,
             ,
@@ -96,21 +81,7 @@ library BlockSampledDatalakeCodecs {
             uint8 aggregateFnId,
             uint8 operatorId,
             uint256 valueToCompare
-        ) = abi.decode(
-                data,
-                (
-                    TaskCode,
-                    DatalakeCode,
-                    uint256,
-                    uint256,
-                    uint256,
-                    uint256,
-                    bytes,
-                    uint8,
-                    uint8,
-                    uint256
-                )
-            );
+        ) = abi.decode(data, (TaskCode, DatalakeCode, uint256, uint256, uint256, uint256, bytes, uint8, uint8, uint256));
         return (
             BlockSampledDatalake({
                 chainId: chainId,
