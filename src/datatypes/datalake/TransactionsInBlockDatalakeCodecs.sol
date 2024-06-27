@@ -2,8 +2,12 @@
 pragma solidity ^0.8.4;
 
 import {DatalakeCode} from "./Datalake.sol";
+import {TaskCode} from "../Task.sol";
+import {Compute, AggregateFn, Operator} from "./ComputeCodecs.sol";
 
 /// @dev A TransactionsInBlockDatalake.
+/// @param chainId The chain Id of the datalake.
+/// @param compute The compute for the datalake.
 /// @param targetBlock The block to sample trnasactions from.
 /// @param startIndex The start index of the transactions to sample.
 /// @param endIndex The end index of the transactions to sample.
@@ -11,6 +15,8 @@ import {DatalakeCode} from "./Datalake.sol";
 /// @param includedTypes The types of transactions to include. Each bytes represents a type of transaction to include/exclude.
 /// @param sampledProperty The detail property to sample.
 struct TransactionsInBlockDatalake {
+    uint256 chainId;
+    Compute compute;
     uint256 targetBlock;
     uint256 startIndex;
     uint256 endIndex;
@@ -26,13 +32,18 @@ library TransactionsInBlockDatalakeCodecs {
     /// @param datalake The TransactionsInBlockDatalake to encode.
     function encode(TransactionsInBlockDatalake memory datalake) internal pure returns (bytes memory) {
         return abi.encode(
+            TaskCode.Datalake,
             DatalakeCode.TransactionsInBlock,
+            datalake.chainId,
             datalake.targetBlock,
             datalake.startIndex,
             datalake.endIndex,
             datalake.increment,
             datalake.includedTypes,
-            datalake.sampledProperty
+            datalake.sampledProperty,
+            datalake.compute.aggregateFnId,
+            datalake.compute.operatorId,
+            datalake.compute.valueToCompare
         );
     }
 
@@ -59,14 +70,28 @@ library TransactionsInBlockDatalakeCodecs {
     function decode(bytes memory data) internal pure returns (TransactionsInBlockDatalake memory) {
         (
             ,
+            ,
+            uint256 chainId,
             uint256 targetBlock,
             uint256 startIndex,
             uint256 endIndex,
             uint256 increment,
             uint256 includedTypes,
-            bytes memory sampledProperty
-        ) = abi.decode(data, (DatalakeCode, uint256, uint256, uint256, uint256, uint256, bytes));
+            bytes memory sampledProperty,
+            uint8 aggregateFnId,
+            uint8 operatorId,
+            uint256 valueToCompare
+        ) = abi.decode(
+            data,
+            (TaskCode, DatalakeCode, uint256, uint256, uint256, uint256, uint256, uint256, bytes, uint8, uint8, uint256)
+        );
         return TransactionsInBlockDatalake({
+            chainId: chainId,
+            compute: Compute({
+                aggregateFnId: AggregateFn(aggregateFnId),
+                operatorId: Operator(operatorId),
+                valueToCompare: valueToCompare
+            }),
             targetBlock: targetBlock,
             startIndex: startIndex,
             endIndex: endIndex,

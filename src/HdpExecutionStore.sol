@@ -8,14 +8,12 @@ import {IFactsRegistry} from "./interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "./interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "./interfaces/IAggregatorsFactory.sol";
 
-import {BlockSampledDatalake, BlockSampledDatalakeCodecs} from "./datatypes/BlockSampledDatalakeCodecs.sol";
+import {BlockSampledDatalake, BlockSampledDatalakeCodecs} from "./datatypes/datalake/BlockSampledDatalakeCodecs.sol";
 import {
     TransactionsInBlockDatalake,
     TransactionsInBlockDatalakeCodecs
-} from "./datatypes/TransactionsInBlockDatalakeCodecs.sol";
-import {IterativeDynamicLayoutDatalake} from "./datatypes/IterativeDynamicLayoutDatalakeCodecs.sol";
-import {IterativeDynamicLayoutDatalakeCodecs} from "./datatypes/IterativeDynamicLayoutDatalakeCodecs.sol";
-import {ComputationalTask, ComputationalTaskCodecs} from "./datatypes/ComputationalTaskCodecs.sol";
+} from "./datatypes/datalake/TransactionsInBlockDatalakeCodecs.sol";
+import {Compute, ComputeCodecs} from "./datatypes/datalake/ComputeCodecs.sol";
 
 /// Caller is not authorized to perform the action
 error Unauthorized();
@@ -35,8 +33,7 @@ contract HdpExecutionStore is AccessControl {
     using MerkleProof for bytes32[];
     using BlockSampledDatalakeCodecs for BlockSampledDatalake;
     using TransactionsInBlockDatalakeCodecs for TransactionsInBlockDatalake;
-    using IterativeDynamicLayoutDatalakeCodecs for IterativeDynamicLayoutDatalake;
-    using ComputationalTaskCodecs for ComputationalTask;
+    using ComputeCodecs for Compute;
 
     /// @notice The status of a task
     enum TaskStatus {
@@ -55,10 +52,10 @@ contract HdpExecutionStore is AccessControl {
     event MmrRootCached(uint256 mmrId, uint256 mmrSize, bytes32 mmrRoot);
 
     /// @notice emitted when a new task with block sampled datalake is scheduled
-    event TaskWithBlockSampledDatalakeScheduled(BlockSampledDatalake datalake, ComputationalTask task);
+    event TaskWithBlockSampledDatalakeScheduled(BlockSampledDatalake datalake, Compute task);
 
     /// @notice emitted when a new task with transactions in block datalake is scheduled
-    event TaskWithTransactionsInBlockDatalakeScheduled(TransactionsInBlockDatalake datalake, ComputationalTask task);
+    event TaskWithTransactionsInBlockDatalakeScheduled(TransactionsInBlockDatalake datalake, Compute task);
 
     /// @notice constant representing role of operator
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
@@ -108,7 +105,7 @@ contract HdpExecutionStore is AccessControl {
     /// @param computationalTask The computational task
     function requestExecutionOfTaskWithBlockSampledDatalake(
         BlockSampledDatalake calldata blockSampledDatalake,
-        ComputationalTask calldata computationalTask
+        Compute calldata computationalTask
     ) external {
         bytes32 datalakeCommitment = blockSampledDatalake.commit();
         bytes32 taskCommitment = computationalTask.commit(datalakeCommitment);
@@ -129,7 +126,7 @@ contract HdpExecutionStore is AccessControl {
     /// @param computationalTask The computational task
     function requestExecutionOfTaskWithTransactionsInBlockDatalake(
         TransactionsInBlockDatalake calldata transactionsInBlockDatalake,
-        ComputationalTask calldata computationalTask
+        Compute calldata computationalTask
     ) external {
         bytes32 datalakeCommitment = transactionsInBlockDatalake.commit();
         bytes32 taskCommitment = computationalTask.commit(datalakeCommitment);

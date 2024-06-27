@@ -6,9 +6,9 @@ import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
 import {
     TransactionsInBlockDatalake,
     TransactionsInBlockDatalakeCodecs
-} from "../src/datatypes/TransactionsInBlockDatalakeCodecs.sol";
-import {ComputationalTask, ComputationalTaskCodecs} from "../src/datatypes/ComputationalTaskCodecs.sol";
-import {AggregateFn, Operator} from "../src/datatypes/ComputationalTaskCodecs.sol";
+} from "../src/datatypes/datalake/TransactionsInBlockDatalakeCodecs.sol";
+import {Compute, ComputeCodecs} from "../src/datatypes/datalake/ComputeCodecs.sol";
+import {AggregateFn, Operator} from "../src/datatypes/datalake/ComputeCodecs.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "../src/interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "../src/interfaces/IAggregatorsFactory.sol";

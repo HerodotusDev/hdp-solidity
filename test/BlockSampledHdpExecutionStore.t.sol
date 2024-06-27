@@ -3,9 +3,11 @@ pragma solidity ^0.8.4;
 
 import {Test} from "forge-std/Test.sol";
 import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
-import {BlockSampledDatalake, BlockSampledDatalakeCodecs} from "../src/datatypes/BlockSampledDatalakeCodecs.sol";
-import {ComputationalTask, ComputationalTaskCodecs} from "../src/datatypes/ComputationalTaskCodecs.sol";
-import {AggregateFn, Operator} from "../src/datatypes/ComputationalTaskCodecs.sol";
+import {
+    BlockSampledDatalake, BlockSampledDatalakeCodecs
+} from "../src/datatypes/datalake/BlockSampledDatalakeCodecs.sol";
+import {Compute, ComputeCodecs} from "../src/datatypes/datalake/ComputeCodecs.sol";
+import {AggregateFn, Operator} from "../src/datatypes/datalake/ComputeCodecs.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "../src/interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "../src/interfaces/IAggregatorsFactory.sol";
@@ -48,7 +50,7 @@ contract MockSharpFactsAggregator is ISharpFactsAggregator {
 
 contract HdpExecutionStoreTest is Test {
     using BlockSampledDatalakeCodecs for BlockSampledDatalake;
-    using ComputationalTaskCodecs for ComputationalTask;
+    using ComputeCodecs for Compute;
 
     address public proverAddress = address(12);
 

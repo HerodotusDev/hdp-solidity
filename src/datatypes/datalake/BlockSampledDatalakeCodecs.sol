@@ -2,13 +2,19 @@
 pragma solidity ^0.8.4;
 
 import {DatalakeCode} from "./Datalake.sol";
+import {TaskCode} from "../Task.sol";
+import {Compute, AggregateFn, Operator} from "./ComputeCodecs.sol";
 
 /// @dev A BlockSampledDatalake.
+/// @param chainId The chain Id of the datalake.
+/// @param compute The compute for the datalake.
 /// @param blockRangeStart The start block of the range.
 /// @param blockRangeEnd The end block of the range.
 /// @param increment The block increment.
 /// @param sampledProperty The detail property to sample.
 struct BlockSampledDatalake {
+    uint256 chainId;
+    Compute compute;
     uint256 blockRangeStart;
     uint256 blockRangeEnd;
     uint256 increment;
@@ -22,11 +28,16 @@ library BlockSampledDatalakeCodecs {
     /// @param datalake The BlockSampledDatalake to encode.
     function encode(BlockSampledDatalake memory datalake) internal pure returns (bytes memory) {
         return abi.encode(
+            TaskCode.Datalake,
             DatalakeCode.BlockSampled,
+            datalake.chainId,
             datalake.blockRangeStart,
             datalake.blockRangeEnd,
             datalake.increment,
-            datalake.sampledProperty
+            datalake.sampledProperty,
+            datalake.compute.aggregateFnId,
+            datalake.compute.operatorId,
+            datalake.compute.valueToCompare
         );
     }
 
@@ -59,13 +70,31 @@ library BlockSampledDatalakeCodecs {
     /// @dev Decodes a BlockSampledDatalake.
     /// @param data The encoded BlockSampledDatalake.
     function decode(bytes memory data) internal pure returns (BlockSampledDatalake memory) {
-        (, uint256 blockRangeStart, uint256 blockRangeEnd, uint256 increment, bytes memory sampledProperty) =
-            abi.decode(data, (DatalakeCode, uint256, uint256, uint256, bytes));
-        return BlockSampledDatalake({
-            blockRangeStart: blockRangeStart,
-            blockRangeEnd: blockRangeEnd,
-            increment: increment,
-            sampledProperty: sampledProperty
-        });
+        (
+            ,
+            ,
+            uint256 chainId,
+            uint256 blockRangeStart,
+            uint256 blockRangeEnd,
+            uint256 increment,
+            bytes memory sampledProperty,
+            uint8 aggregateFnId,
+            uint8 operatorId,
+            uint256 valueToCompare
+        ) = abi.decode(data, (TaskCode, DatalakeCode, uint256, uint256, uint256, uint256, bytes, uint8, uint8, uint256));
+        return (
+            BlockSampledDatalake({
+                chainId: chainId,
+                compute: Compute({
+                    aggregateFnId: AggregateFn(aggregateFnId),
+                    operatorId: Operator(operatorId),
+                    valueToCompare: valueToCompare
+                }),
+                blockRangeStart: blockRangeStart,
+                blockRangeEnd: blockRangeEnd,
+                increment: increment,
+                sampledProperty: sampledProperty
+            })
+        );
     }
 }
