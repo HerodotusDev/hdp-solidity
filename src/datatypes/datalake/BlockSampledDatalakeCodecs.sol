@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {DatalakeCode, ChainType} from "./Datalake.sol";
+import {DatalakeCode} from "./Datalake.sol";
 import {TaskCode} from "../Task.sol";
-import {Compute} from "./ComputeCodecs.sol";
+import {Compute, AggregateFn, Operator} from "./ComputeCodecs.sol";
 
 /// @dev A BlockSampledDatalake.
-/// @param chainType The chain type of the datalake.
+/// @param chainId The chain Id of the datalake.
 /// @param compute The compute for the datalake.
 /// @param blockRangeStart The start block of the range.
 /// @param blockRangeEnd The end block of the range.
 /// @param increment The block increment.
 /// @param sampledProperty The detail property to sample.
 struct BlockSampledDatalake {
-    ChainType chainType;
+    uint256 chainId;
     Compute compute;
     uint256 blockRangeStart;
     uint256 blockRangeEnd;
@@ -33,7 +33,7 @@ library BlockSampledDatalakeCodecs {
             abi.encode(
                 TaskCode.Datalake,
                 DatalakeCode.BlockSampled,
-                datalake.chainType,
+                datalake.chainId,
                 datalake.blockRangeStart,
                 datalake.blockRangeEnd,
                 datalake.increment,
@@ -88,7 +88,7 @@ library BlockSampledDatalakeCodecs {
         (
             ,
             ,
-            ChainType chainType,
+            uint256 chainId,
             uint256 blockRangeStart,
             uint256 blockRangeEnd,
             uint256 increment,
@@ -101,7 +101,7 @@ library BlockSampledDatalakeCodecs {
                 (
                     TaskCode,
                     DatalakeCode,
-                    ChainType,
+                    uint256,
                     uint256,
                     uint256,
                     uint256,
@@ -113,10 +113,10 @@ library BlockSampledDatalakeCodecs {
             );
         return (
             BlockSampledDatalake({
-                chainType: chainType,
+                chainId: chainId,
                 compute: Compute({
-                    aggregateFnId: aggregateFnId,
-                    operatorId: operatorId,
+                    aggregateFnId: AggregateFn(aggregateFnId),
+                    operatorId: Operator(operatorId),
                     valueToCompare: valueToCompare
                 }),
                 blockRangeStart: blockRangeStart,

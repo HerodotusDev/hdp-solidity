@@ -6,9 +6,3 @@ enum DatalakeCode {
     BlockSampled,
     TransactionsInBlock
 }
-
-/// @notice Chain type.
-enum ChainType {
-    Ethereum,
-    EthereumSepolia,
-}

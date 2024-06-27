@@ -3,10 +3,10 @@ pragma solidity ^0.8.4;
 
 import {DatalakeCode} from "./Datalake.sol";
 import {TaskCode} from "../Task.sol";
-import {Compute} from "./ComputeCodecs.sol";
+import {Compute, AggregateFn, Operator} from "./ComputeCodecs.sol";
 
 /// @dev A TransactionsInBlockDatalake.
-/// @param chainType The chain type of the datalake.
+/// @param chainId The chain Id of the datalake.
 /// @param compute The compute for the datalake.
 /// @param targetBlock The block to sample trnasactions from.
 /// @param startIndex The start index of the transactions to sample.
@@ -15,7 +15,7 @@ import {Compute} from "./ComputeCodecs.sol";
 /// @param includedTypes The types of transactions to include. Each bytes represents a type of transaction to include/exclude.
 /// @param sampledProperty The detail property to sample.
 struct TransactionsInBlockDatalake {
-    ChainType chainType;
+    uint256 chainId;
     Compute compute;
     uint256 targetBlock;
     uint256 startIndex;
@@ -35,9 +35,9 @@ library TransactionsInBlockDatalakeCodecs {
     ) internal pure returns (bytes memory) {
         return
             abi.encode(
-                TaskCode.DatalakeCompute,
+                TaskCode.Datalake,
                 DatalakeCode.TransactionsInBlock,
-                datalake.chainType,
+                datalake.chainId,
                 datalake.targetBlock,
                 datalake.startIndex,
                 datalake.endIndex,
@@ -78,15 +78,11 @@ library TransactionsInBlockDatalakeCodecs {
     /// @param data The encoded TransactionsInBlockDatalake.
     function decode(
         bytes memory data
-    )
-        internal
-        pure
-        returns (TransactionsInBlockDatalake memory, Compute memory)
-    {
+    ) internal pure returns (TransactionsInBlockDatalake memory) {
         (
             ,
             ,
-            ChainType chainType,
+            uint256 chainId,
             uint256 targetBlock,
             uint256 startIndex,
             uint256 endIndex,
@@ -101,7 +97,7 @@ library TransactionsInBlockDatalakeCodecs {
                 (
                     TaskCode,
                     DatalakeCode,
-                    ChainType,
+                    uint256,
                     uint256,
                     uint256,
                     uint256,
@@ -113,12 +109,12 @@ library TransactionsInBlockDatalakeCodecs {
                     uint256
                 )
             );
-        return (
+        return
             TransactionsInBlockDatalake({
-                chainType: chainType,
+                chainId: chainId,
                 compute: Compute({
-                    aggregateFnId: aggregateFnId,
-                    operatorId: operatorId,
+                    aggregateFnId: AggregateFn(aggregateFnId),
+                    operatorId: Operator(operatorId),
                     valueToCompare: valueToCompare
                 }),
                 targetBlock: targetBlock,
@@ -127,8 +123,6 @@ library TransactionsInBlockDatalakeCodecs {
                 increment: increment,
                 includedTypes: includedTypes,
                 sampledProperty: sampledProperty
-            }),
-
-        );
+            });
     }
 }
