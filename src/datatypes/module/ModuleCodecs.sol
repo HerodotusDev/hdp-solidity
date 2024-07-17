@@ -16,9 +16,7 @@ struct Module {
 library ModuleCodecs {
     /// @dev Encodes a Module.
     /// @param module The Module to encode.
-    function encode_task(
-        Module memory module
-    ) internal pure returns (bytes memory) {
+    function encode_task(Module memory module) internal pure returns (bytes memory) {
         return abi.encode(TaskCode.Module, module.classHash, module.inputs);
     }
 
@@ -31,10 +29,7 @@ library ModuleCodecs {
     /// @dev Decodes a Module.
     /// @param data The encoded Module.
     function decode(bytes memory data) internal pure returns (Module memory) {
-        (, uint256 classHash, uint256[] memory inputs) = abi.decode(
-            data,
-            (TaskCode, uint256, uint256[])
-        );
+        (, uint256 classHash, uint256[] memory inputs) = abi.decode(data, (TaskCode, uint256, uint256[]));
         return Module(classHash, inputs);
     }
 }
