@@ -3,42 +3,38 @@ pragma solidity ^0.8.4;
 
 import {TaskCode} from "../Task.sol";
 
-/// @dev A module compute.
+/// @dev A module.
 /// @param classHash The class hash of the module.
 /// @param inputs The inputs to the module.
-struct ModuleCompute {
+struct Module {
     uint256 classHash;
     uint256[] inputs;
 }
 
-/// @notice Codecs for ModuleCompute.
+/// @notice Codecs for Module.
 /// @dev Represent a computation perform by a module.
-library ModuleComputeCodecs {
-    /// @dev Encodes a ModuleCompute.
-    /// @param module The ModuleCompute to encode.
+library ModuleCodecs {
+    /// @dev Encodes a Module.
+    /// @param module The Module to encode.
     function encode_task(
-        ModuleCompute memory module
+        Module memory module
     ) internal pure returns (bytes memory) {
         return abi.encode(TaskCode.Module, module.classHash, module.inputs);
     }
 
-    /// @dev Get the commitment of a ModuleCompute.
-    /// @param module The ModuleCompute to commit.
-    function commit(
-        ModuleCompute memory module
-    ) internal pure returns (bytes32) {
+    /// @dev Get the commitment of a Module.
+    /// @param module The Module to commit.
+    function commit(Module memory module) internal pure returns (bytes32) {
         return keccak256(abi.encode(module.classHash, module.inputs));
     }
 
-    /// @dev Decodes a ModuleCompute.
-    /// @param data The encoded ModuleCompute.
-    function decode(
-        bytes memory data
-    ) internal pure returns (ModuleCompute memory) {
+    /// @dev Decodes a Module.
+    /// @param data The encoded Module.
+    function decode(bytes memory data) internal pure returns (Module memory) {
         (, uint256 classHash, uint256[] memory inputs) = abi.decode(
             data,
             (TaskCode, uint256, uint256[])
         );
-        return ModuleCompute(classHash, inputs);
+        return Module(classHash, inputs);
     }
 }
