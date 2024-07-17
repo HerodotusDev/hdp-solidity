@@ -7,8 +7,8 @@ import {TaskCode} from "../Task.sol";
 /// @param classHash The class hash of the module.
 /// @param inputs The inputs to the module.
 struct Module {
-    uint256 classHash;
-    uint256[] inputs;
+    bytes32 classHash;
+    bytes32[] inputs;
 }
 
 /// @notice Codecs for Module.
@@ -16,7 +16,9 @@ struct Module {
 library ModuleCodecs {
     /// @dev Encodes a Module.
     /// @param module The Module to encode.
-    function encode_task(Module memory module) internal pure returns (bytes memory) {
+    function encode_task(
+        Module memory module
+    ) internal pure returns (bytes memory) {
         return abi.encode(TaskCode.Module, module.classHash, module.inputs);
     }
 
@@ -29,7 +31,10 @@ library ModuleCodecs {
     /// @dev Decodes a Module.
     /// @param data The encoded Module.
     function decode(bytes memory data) internal pure returns (Module memory) {
-        (, uint256 classHash, uint256[] memory inputs) = abi.decode(data, (TaskCode, uint256, uint256[]));
+        (, bytes32 classHash, bytes32[] memory inputs) = abi.decode(
+            data,
+            (TaskCode, bytes32, bytes32[])
+        );
         return Module(classHash, inputs);
     }
 }
