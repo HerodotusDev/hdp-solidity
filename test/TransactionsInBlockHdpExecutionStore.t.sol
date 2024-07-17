@@ -94,6 +94,7 @@ contract HdpExecutionStoreTest is Test {
         });
 
     function setUp() public {
+        vm.chainId(11155111);
         // Registery for facts that has been processed through SHARP
         factsRegistry = new MockFactsRegistry();
         // Factory for creating SHARP facts aggregators
@@ -161,7 +162,7 @@ contract HdpExecutionStoreTest is Test {
             .split128(uint256(bytes32(fetchedResultsMerkleRoot)));
 
         // Cache MMR roots
-        for (uint i = 0; i < fetchedMmrIds.length; i++) {
+        for (uint256 i = 0; i < fetchedMmrIds.length; i++) {
             hdp.cacheMmrRoot(fetchedMmrIds[i]);
         }
 
