@@ -77,6 +77,7 @@ contract HdpExecutionStoreTest is Test {
     // !! And construct corresponding BlockSampledDatalake and ComputationalTask here
     BlockSampledDatalake datalake =
         BlockSampledDatalake({
+            chainId: 11155111,
             blockRangeStart: 5858987,
             blockRangeEnd: 5858997,
             increment: 2,

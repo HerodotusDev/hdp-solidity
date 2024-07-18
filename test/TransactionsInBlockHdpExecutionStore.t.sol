@@ -77,6 +77,7 @@ contract HdpExecutionStoreTest is Test {
     // !! And construct corresponding TransactionsInBlockDatalake and ComputationalTask here
     TransactionsInBlockDatalake datalake =
         TransactionsInBlockDatalake({
+            chainId: 11155111,
             targetBlock: uint256(5605816),
             startIndex: uint256(12),
             endIndex: uint256(53),

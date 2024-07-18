@@ -9,6 +9,7 @@ import {DatalakeCode} from "./Datalake.sol";
 /// @param increment The block increment.
 /// @param sampledProperty The detail property to sample.
 struct BlockSampledDatalake {
+    uint256 chainId;
     uint256 blockRangeStart;
     uint256 blockRangeEnd;
     uint256 increment;
@@ -26,6 +27,7 @@ library BlockSampledDatalakeCodecs {
         return
             abi.encode(
                 DatalakeCode.BlockSampled,
+                datalake.chainId,
                 datalake.blockRangeStart,
                 datalake.blockRangeEnd,
                 datalake.increment,
@@ -76,13 +78,18 @@ library BlockSampledDatalakeCodecs {
     ) internal pure returns (BlockSampledDatalake memory) {
         (
             ,
+            uint256 chainId,
             uint256 blockRangeStart,
             uint256 blockRangeEnd,
             uint256 increment,
             bytes memory sampledProperty
-        ) = abi.decode(data, (DatalakeCode, uint256, uint256, uint256, bytes));
+        ) = abi.decode(
+                data,
+                (DatalakeCode, uint256, uint256, uint256, uint256, bytes)
+            );
         return
             BlockSampledDatalake({
+                chainId: chainId,
                 blockRangeStart: blockRangeStart,
                 blockRangeEnd: blockRangeEnd,
                 increment: increment,
