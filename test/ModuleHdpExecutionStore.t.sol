@@ -101,7 +101,7 @@ contract HdpExecutionStoreTest is Test {
         );
 
         Module memory moduleTask = Module({
-            classHash: bytes32(
+            programHash: bytes32(
                 0x034d4ff54bc5c6cfee6719bfaa94ffa374071e8d656b74823681a955e9033dd9
             ),
             inputs: moduleInputs
