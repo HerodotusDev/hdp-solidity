@@ -200,7 +200,7 @@ contract HdpExecutionStoreTest is Test {
         inputs[1] = "-m";
         inputs[2] = "helpers.hash_program";
         inputs[3] = "--program";
-        inputs[4] = "build/compiled_cairo/hdp.json";
+        inputs[4] = "build/hdp.json";
         bytes memory abiEncoded = vm.ffi(inputs);
         return abi.decode(abiEncoded, (bytes32));
     }

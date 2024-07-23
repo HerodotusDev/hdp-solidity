@@ -102,7 +102,7 @@ contract HdpExecutionStoreTest is Test {
 
         Module memory moduleTask = Module({
             programHash: bytes32(
-                0x034d4ff54bc5c6cfee6719bfaa94ffa374071e8d656b74823681a955e9033dd9
+                0x00af1333b8346c1ac941efe380f3122a71c1f7cbad19301543712e74f765bfca
             ),
             inputs: moduleInputs
         });
@@ -218,7 +218,7 @@ contract HdpExecutionStoreTest is Test {
         inputs[1] = "-m";
         inputs[2] = "helpers.hash_program";
         inputs[3] = "--program";
-        inputs[4] = "build/compiled_cairo/hdp.json";
+        inputs[4] = "build/hdp.json";
         bytes memory abiEncoded = vm.ffi(inputs);
         return abi.decode(abiEncoded, (bytes32));
     }
@@ -234,16 +234,6 @@ contract HdpExecutionStoreTest is Test {
         inputs[3] = bytesToString(encodedDatalake);
         vm.ffi(inputs);
     }
-
-    // function _callPreprocessCliForModule(
-    //     bytes memory encodedTask,
-    // ) internal {
-    //     string[] memory inputs = new string[](3);
-    //     inputs[0] = "node";
-    //     inputs[1] = "./helpers/fetch_cairo_input.js";
-    //     inputs[2] = bytesToString(encodedTask);
-    //     vm.ffi(inputs);
-    // }
 
     function bytesToString(
         bytes memory _data
@@ -266,7 +256,7 @@ contract HdpExecutionStoreTest is Test {
         inputs[1] = "-m";
         inputs[2] = "helpers.compute_fact_hash";
         inputs[3] = "--cairo_pie";
-        inputs[4] = "./helpers/target/bs_hdp_pie.zip";
+        inputs[4] = "./helpers/target/md_hdp_pie.zip";
         bytes memory abiEncoded = vm.ffi(inputs);
         return abi.decode(abiEncoded, (bytes32));
     }

@@ -1,5 +1,5 @@
 {
-  "deliveryChainId": 11155111,
+  "destinationChainId": 11155111,
   "tasks": [
     {
       "type": "DatalakeCompute",
