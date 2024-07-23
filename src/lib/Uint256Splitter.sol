@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
 /// Not a expected type.
@@ -12,14 +12,19 @@ library Uint256Splitter {
 
     /// @notice Splits a uint256 into two uint128s (low, high) represented as uint256s.
     /// @param a The uint256 to split.
-    function split128(uint256 a) internal pure returns (uint256 lower, uint256 upper) {
+    function split128(
+        uint256 a
+    ) internal pure returns (uint256 lower, uint256 upper) {
         return (a & MASK, a >> 128);
     }
 
     /// @notice Merges two uint128s (low, high) into one uint256.
     /// @param lower The lower uint256. The caller is required to pass a value that is less than 2^128 - 1.
     /// @param upper The upper uint256.
-    function merge128(uint256 lower, uint256 upper) internal pure returns (uint256 a) {
+    function merge128(
+        uint256 lower,
+        uint256 upper
+    ) internal pure returns (uint256 a) {
         if (lower > MASK) {
             revert InvalidType();
         }

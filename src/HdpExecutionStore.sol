@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
 import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
@@ -24,7 +24,7 @@ error NotInBatch();
 error NotFinalized();
 
 /// @title HdpExecutionStore
-/// @author Herodotus Dev
+/// @author Herodotus Dev Ltd
 /// @notice A contract to store the execution results of HDP tasks
 contract HdpExecutionStore is AccessControl {
     using MerkleProof for bytes32[];
