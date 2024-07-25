@@ -1,0 +1,3 @@
+hdp run -r helpers/target/bs_request.json -p helpers/target/bs_cached_input.json -o helpers/target/bs_cached_output.json -c helpers/target/bs_hdp_pie.zip
+hdp run -r helpers/target/tx_request.json -p helpers/target/tx_cached_input.json -o helpers/target/tx_cached_output.json -c helpers/target/tx_hdp_pie.zip
+hdp run -r helpers/target/md_request.json -p helpers/target/md_cached_input.json -o helpers/target/md_cached_output.json -c helpers/target/md_hdp_pie.zip

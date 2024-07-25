@@ -3,10 +3,10 @@
     "0x0000000000000000000000000000000000000000000000000000000000000000"
   ],
   "results_commitments": [
-    "0x5c0e0fecbc54ca623078f11b21648a8a994bc651faa5d89caf268238190cbcc0"
+    "0x6b22e06341549dc83d62d094c7496e15b2057fc75e90b6d0a58205b2c2d39598"
   ],
   "tasks_commitments": [
-    "0x879869b6d237b92bfdd3f3f7b76baaa9ebb2a3ad5e8478d12cca258d3def05af"
+    "0x37e97f3d3f828806d6f460eb50e5575fd37c9f659c5db40f7d657cdbfe1fd1f6"
   ],
   "task_inclusion_proofs": [
     []
@@ -14,8 +14,8 @@
   "results_inclusion_proofs": [
     []
   ],
-  "results_root": "0xf2240c14db3c2feca8ff613863720996520be1faec843e7d7a8d4006031308d3",
-  "tasks_root": "0xc927a9768e71948db44e0f674159298fdab90382a9d6aaf2a3631d332ae3cd4f",
+  "results_root": "0xbe7bb3e8d053273c753c752107b0b528a24a03058ae989c1e0a9d920c96da753",
+  "tasks_root": "0x25bdd48e6c00a86eef6c08afb935635652d246bdf07f54e3ef7c81c29e763fe2",
   "mmr_metas": [
     {
       "id": 27,

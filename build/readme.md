@@ -1,11 +1,11 @@
-### Pedersen Program Hash of hdp cairo
+### Pedersen Program Hash
 
 ```
-0x059149d9a203d3b68b86089a6d763fc2adb2d297a2a064d3f504ac44323ac282
+0x343995a543ac64616d33fa77670cfa4e498691c96c2d964a0a07181dff4ce81
 ```
 
 ### Solidity Contract
 
 ```
-0xA76F8fE359BF8C06A8DF83613B8A4B2ffBF050C5
+0xF17f85162f507d002F8561a90D72c74c08583e4B
 ```
