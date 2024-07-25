@@ -7,5 +7,5 @@
 ### Solidity Contract
 
 ```
-0xF17f85162f507d002F8561a90D72c74c08583e4B
+0xbdf44dc8C2FbeD86163221c749a2DBcB72FCe0c6
 ```
