@@ -7,5 +7,4 @@ contract MockedSharpFactsRegistry {
     function setValid(bytes32 fact) external {
         isValid[fact] = true;
     }
-
 }
