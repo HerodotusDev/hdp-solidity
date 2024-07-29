@@ -75,26 +75,19 @@ contract HdpExecutionStoreTest is Test {
 
         // !! If want to fetch different input, modify helpers/target/bs_cached_input.json && helpers/target/bs_cached_output.json
         // !! And construct corresponding BlockSampledDatalake and ComputationalTask here
-        bytes32[] memory moduleInputs = new bytes32[](3);
-        moduleInputs[0] = bytes32(uint256(5186021));
+        bytes32[] memory moduleInputs = new bytes32[](2);
+        moduleInputs[0] = bytes32(uint256(5382820));
         assertEq(
             moduleInputs[0],
             bytes32(
-                0x00000000000000000000000000000000000000000000000000000000004f21e5
+                0x00000000000000000000000000000000000000000000000000000000005222a4
             )
         );
-        moduleInputs[1] = bytes32(uint256(5186024));
-        assertEq(
-            moduleInputs[1],
-            bytes32(
-                0x00000000000000000000000000000000000000000000000000000000004f21e8
-            )
-        );
-        moduleInputs[2] = bytes32(
+        moduleInputs[1] = bytes32(
             uint256(113007187165825507614120510246167695609561346261)
         );
         assertEq(
-            moduleInputs[2],
+            moduleInputs[1],
             bytes32(
                 0x00000000000000000000000013cb6ae34a13a0977f4d7101ebc24b87bb23f0d5
             )
@@ -102,7 +95,7 @@ contract HdpExecutionStoreTest is Test {
 
         ModuleTask memory moduleTask = ModuleTask({
             programHash: bytes32(
-                0x00af1333b8346c1ac941efe380f3122a71c1f7cbad19301543712e74f765bfca
+                0x064041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412
             ),
             inputs: moduleInputs
         });
