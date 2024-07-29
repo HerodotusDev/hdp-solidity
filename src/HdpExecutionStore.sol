@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.4;
 
 import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
 import {MerkleProof} from "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
@@ -95,7 +95,7 @@ contract HdpExecutionStore is AccessControl {
         SHARP_FACTS_REGISTRY = factsRegistry;
         AGGREGATORS_FACTORY = aggregatorsFactory;
         PROGRAM_HASH = programHash;
-        CHAIN_ID = 11155111;
+        CHAIN_ID = block.chainid;
 
         _setRoleAdmin(OPERATOR_ROLE, OPERATOR_ROLE);
         _grantRole(OPERATOR_ROLE, _msgSender());
