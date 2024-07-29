@@ -95,7 +95,7 @@ contract HdpExecutionStore is AccessControl {
         SHARP_FACTS_REGISTRY = factsRegistry;
         AGGREGATORS_FACTORY = aggregatorsFactory;
         PROGRAM_HASH = programHash;
-        CHAIN_ID = block.chainid;
+        CHAIN_ID = 11155111;
 
         _setRoleAdmin(OPERATOR_ROLE, OPERATOR_ROLE);
         _grantRole(OPERATOR_ROLE, _msgSender());

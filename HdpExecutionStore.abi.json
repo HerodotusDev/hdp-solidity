@@ -1,0 +1,888 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "factsRegistry",
+        "type": "address",
+        "internalType": "contract IFactsRegistry"
+      },
+      {
+        "name": "aggregatorsFactory",
+        "type": "address",
+        "internalType": "contract IAggregatorsFactory"
+      },
+      {
+        "name": "programHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "AGGREGATORS_FACTORY",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IAggregatorsFactory"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "CHAIN_ID",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "DEFAULT_ADMIN_ROLE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "OPERATOR_ROLE",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "PROGRAM_HASH",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "SHARP_FACTS_REGISTRY",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IFactsRegistry"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "authenticateTaskExecution",
+    "inputs": [
+      {
+        "name": "mmrIds",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      {
+        "name": "mmrSizes",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      {
+        "name": "taskMerkleRootLow",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "taskMerkleRootHigh",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "resultMerkleRootLow",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "resultMerkleRootHigh",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "tasksInclusionProofs",
+        "type": "bytes32[][]",
+        "internalType": "bytes32[][]"
+      },
+      {
+        "name": "resultsInclusionProofs",
+        "type": "bytes32[][]",
+        "internalType": "bytes32[][]"
+      },
+      {
+        "name": "taskCommitments",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "taskResults",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "cacheMmrRoot",
+    "inputs": [
+      {
+        "name": "mmrId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "cachedMMRsRoots",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "cachedTasksResult",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "status",
+        "type": "uint8",
+        "internalType": "enum HdpExecutionStore.TaskStatus"
+      },
+      {
+        "name": "result",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getFinalizedTaskResult",
+    "inputs": [
+      {
+        "name": "taskCommitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getRoleAdmin",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTaskStatus",
+    "inputs": [
+      {
+        "name": "taskCommitment",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum HdpExecutionStore.TaskStatus"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "grantRole",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "hasRole",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "loadMmrRoot",
+    "inputs": [
+      {
+        "name": "mmrId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "mmrSize",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "renounceRole",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "callerConfirmation",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "requestExecutionOfModuleTask",
+    "inputs": [
+      {
+        "name": "moduleTask",
+        "type": "tuple",
+        "internalType": "struct ModuleTask",
+        "components": [
+          {
+            "name": "programHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "inputs",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "requestExecutionOfTaskWithBlockSampledDatalake",
+    "inputs": [
+      {
+        "name": "blockSampledDatalake",
+        "type": "tuple",
+        "internalType": "struct BlockSampledDatalake",
+        "components": [
+          {
+            "name": "chainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "blockRangeStart",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "blockRangeEnd",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "increment",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sampledProperty",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "computationalTask",
+        "type": "tuple",
+        "internalType": "struct ComputationalTask",
+        "components": [
+          {
+            "name": "aggregateFnId",
+            "type": "uint8",
+            "internalType": "enum AggregateFn"
+          },
+          {
+            "name": "operatorId",
+            "type": "uint8",
+            "internalType": "enum Operator"
+          },
+          {
+            "name": "valueToCompare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "requestExecutionOfTaskWithTransactionsInBlockDatalake",
+    "inputs": [
+      {
+        "name": "transactionsInBlockDatalake",
+        "type": "tuple",
+        "internalType": "struct TransactionsInBlockDatalake",
+        "components": [
+          {
+            "name": "chainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "targetBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "startIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "endIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "increment",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "includedTypes",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sampledProperty",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "computationalTask",
+        "type": "tuple",
+        "internalType": "struct ComputationalTask",
+        "components": [
+          {
+            "name": "aggregateFnId",
+            "type": "uint8",
+            "internalType": "enum AggregateFn"
+          },
+          {
+            "name": "operatorId",
+            "type": "uint8",
+            "internalType": "enum Operator"
+          },
+          {
+            "name": "valueToCompare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "revokeRole",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "standardLeafHash",
+    "inputs": [
+      {
+        "name": "value",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "supportsInterface",
+    "inputs": [
+      {
+        "name": "interfaceId",
+        "type": "bytes4",
+        "internalType": "bytes4"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "MmrRootCached",
+    "inputs": [
+      {
+        "name": "mmrId",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "mmrSize",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "mmrRoot",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ModuleTaskScheduled",
+    "inputs": [
+      {
+        "name": "moduleTask",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct ModuleTask",
+        "components": [
+          {
+            "name": "programHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "inputs",
+            "type": "bytes32[]",
+            "internalType": "bytes32[]"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleAdminChanged",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "previousAdminRole",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "newAdminRole",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleGranted",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleRevoked",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TaskWithBlockSampledDatalakeScheduled",
+    "inputs": [
+      {
+        "name": "datalake",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct BlockSampledDatalake",
+        "components": [
+          {
+            "name": "chainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "blockRangeStart",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "blockRangeEnd",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "increment",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sampledProperty",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "task",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct ComputationalTask",
+        "components": [
+          {
+            "name": "aggregateFnId",
+            "type": "uint8",
+            "internalType": "enum AggregateFn"
+          },
+          {
+            "name": "operatorId",
+            "type": "uint8",
+            "internalType": "enum Operator"
+          },
+          {
+            "name": "valueToCompare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TaskWithTransactionsInBlockDatalakeScheduled",
+    "inputs": [
+      {
+        "name": "datalake",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct TransactionsInBlockDatalake",
+        "components": [
+          {
+            "name": "chainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "targetBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "startIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "endIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "increment",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "includedTypes",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sampledProperty",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "task",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct ComputationalTask",
+        "components": [
+          {
+            "name": "aggregateFnId",
+            "type": "uint8",
+            "internalType": "enum AggregateFn"
+          },
+          {
+            "name": "operatorId",
+            "type": "uint8",
+            "internalType": "enum Operator"
+          },
+          {
+            "name": "valueToCompare",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AccessControlBadConfirmation",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AccessControlUnauthorizedAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "neededRole",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "DoubleRegistration",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidFact",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotFinalized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotInBatch",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "Unauthorized",
+    "inputs": []
+  }
+]
