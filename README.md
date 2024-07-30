@@ -24,8 +24,9 @@ The HDP Solidity contracts interface with the Herodotus Data Processor (HDP) to 
 
 ### Key Functions
 
-- `requestExecutionOfTaskWithBlockSampledDatalake()`: Schedules computational tasks using block-sampled data lake.
-- `requestExecutionOfTaskWithTransactionsInBlockDatalake()`: Schedules computational tasks using transactions-in-block data lake.
+- `requestExecutionOfTaskWithBlockSampledDatalake()`: Schedules datalake task using block-sampled data lake.
+- `requestExecutionOfTaskWithTransactionsInBlockDatalake()`: Schedules datalake tasks using transactions-in-block data lake.
+- `requestExecutionOfModuleTask()`: schedule module task.
 - `authenticateTaskExecution()`: Verifies and finalizes the execution of computational tasks by validating Merkle proofs and registered facts.
 - `getFinalizedTaskResult()`: Retrieves results of finalized tasks.
 
@@ -35,27 +36,76 @@ The HDP Solidity contracts interface with the Herodotus Data Processor (HDP) to 
 - **SharpFactsAggregator**: Aggregates jobs [More info](https://github.com/HerodotusDev/offchain-evm-headers-processor/blob/main/solidity-verifier/src/SharpFactsAggregator.sol)
 - **AggregatorsFactory**: Factory pattern to create data aggregators. [More info](https://github.com/HerodotusDev/offchain-evm-headers-processor/blob/main/solidity-verifier/src/AggregatorsFactory.sol)
 
-## Data Structures
+## Available task
 
-### Data Lakes
+### 1. Datalake Task
 
-- **BlockSampledDatalake**:
-
-  - Structure used for defining data samples over a range of blocks.
-  - Encoded through `BlockSampledDatalakeCodecs` which manages the serialization and commitment of the data structures.
-  - `commit()` function creates a hash of the encoded datalake, used for verifying integrity and registering tasks.
-
-- **TransactionsInBlockDatalake**:
-  - Structure used for defining transactions included in the target block.
-  - Encoded through `TransactionsInBlockDatalakeCodecs` which manages the serialization and commitment of the data structures.
-  - `commit()` function creates a hash of the encoded datalake, used for verifying integrity and registering tasks.
-
-### Computational Tasks
+#### Computational Task
 
 - **ComputationalTask**:
+
   - Defines tasks that perform aggregate functions on the data retrieved from datalakes.
   - Encoded and committed using `ComputationalTaskCodecs`, ensuring that tasks are securely and efficiently processed.
   - Supported functions include average, sum, min, max, count, and Merkle proof aggregation, with various operators for conditional processing.
+
+- **BlockSampledDatalake**:
+
+```solidity
+BlockSampledDatalake datalake = BlockSampledDatalake({
+    chainId: 11155111,
+    blockRangeStart: 5858987,
+    blockRangeEnd: 5858997,
+    increment: 2,
+    sampledProperty: BlockSampledDatalakeCodecs.encodeSampledPropertyForHeaderProp(uint8(18))
+});
+
+ComputationalTask computationalTask = ComputationalTask({
+    aggregateFnId: AggregateFn.SLR,
+    operatorId: Operator.NONE,
+    valueToCompare: uint256(10000000)
+});
+```
+
+- Structure used for defining data samples over a range of blocks.
+- Encoded through `BlockSampledDatalakeCodecs` which manages the serialization and commitment of the data structures.
+- `commit()` function creates a hash of the encoded datalake, used for verifying integrity and registering tasks.
+
+- **TransactionsInBlockDatalake**:
+
+```solidity
+TransactionsInBlockDatalake datalake = TransactionsInBlockDatalake({
+    chainId: 11155111,
+    targetBlock: uint256(5605816),
+    startIndex: uint256(12),
+    endIndex: uint256(53),
+    increment: uint256(1),
+    includedTypes: uint256(0x00000101),
+    sampledProperty: TransactionsInBlockDatalakeCodecs.encodeSampledPropertyFortxReceipt(uint8(0))
+});
+
+ComputationalTask computationalTask =
+    ComputationalTask({aggregateFnId: AggregateFn.SLR, operatorId: Operator.NONE, valueToCompare: uint256(50)});
+```
+
+- Structure used for defining transactions included in the target block.
+- Encoded through `TransactionsInBlockDatalakeCodecs` which manages the serialization and commitment of the data structures.
+- `commit()` function creates a hash of the encoded datalake, used for verifying integrity and registering tasks.
+
+### 1. Module Task
+
+- Define program hash of the target module and corresponding inputs as array.
+
+```solidity
+bytes32[] memory moduleInputs = new bytes32[](2);
+moduleInputs[0] = bytes32(uint256(5382820));
+moduleInputs[1] = bytes32(uint256(113007187165825507614120510246167695609561346261));
+
+ModuleTask memory moduleTask = ModuleTask({
+    programHash: bytes32(0x064041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412),
+    inputs: moduleInputs
+});
+
+```
 
 ## Codecs
 
