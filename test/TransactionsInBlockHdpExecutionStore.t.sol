@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
 import {Test} from "forge-std/Test.sol";
@@ -6,9 +6,9 @@ import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
 import {
     TransactionsInBlockDatalake,
     TransactionsInBlockDatalakeCodecs
-} from "../src/datatypes/TransactionsInBlockDatalakeCodecs.sol";
-import {ComputationalTask, ComputationalTaskCodecs} from "../src/datatypes/ComputationalTaskCodecs.sol";
-import {AggregateFn, Operator} from "../src/datatypes/ComputationalTaskCodecs.sol";
+} from "../src/datatypes/datalake/TransactionsInBlockDatalakeCodecs.sol";
+import {ComputationalTask, ComputationalTaskCodecs} from "../src/datatypes/datalake/ComputeCodecs.sol";
+import {AggregateFn, Operator} from "../src/datatypes/datalake/ComputeCodecs.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "../src/interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "../src/interfaces/IAggregatorsFactory.sol";
@@ -75,6 +75,7 @@ contract HdpExecutionStoreTest is Test {
     // !! If want to fetch different input, modify helpers/target/tx_cached_input.json && helpers/target/tx_cached_output.json
     // !! And construct corresponding TransactionsInBlockDatalake and ComputationalTask here
     TransactionsInBlockDatalake datalake = TransactionsInBlockDatalake({
+        chainId: 11155111,
         targetBlock: uint256(5605816),
         startIndex: uint256(12),
         endIndex: uint256(53),
@@ -92,13 +93,6 @@ contract HdpExecutionStoreTest is Test {
         factsRegistry = new MockFactsRegistry();
         // Factory for creating SHARP facts aggregators
         aggregatorsFactory = new MockAggregatorsFactory();
-
-        bytes[] memory datalakeEncodedCompare = new bytes[](1);
-        datalakeEncodedCompare[0] = datalake.encode();
-        bytes[] memory taskEncodedCompare = new bytes[](1);
-        taskEncodedCompare[0] = computationalTask.encode();
-
-        _callPreprocessCli(abi.encode(taskEncodedCompare), abi.encode(datalakeEncodedCompare));
 
         // Get program hash from compiled Cairo program
         programHash = _getProgramHash();
@@ -127,8 +121,6 @@ contract HdpExecutionStoreTest is Test {
 
         // Create mock SHARP facts aggregator
         aggregatorsFactory.createAggregator(fetchedMmrIds[0], sharpFactsAggregator);
-        assertTrue(hdp.hasRole(keccak256("OPERATOR_ROLE"), address(this)));
-        hdp.grantRole(keccak256("OPERATOR_ROLE"), proverAddress);
     }
 
     function testHdpExecutionFlow() public {
@@ -181,18 +173,9 @@ contract HdpExecutionStoreTest is Test {
         inputs[1] = "-m";
         inputs[2] = "helpers.hash_program";
         inputs[3] = "--program";
-        inputs[4] = "build/compiled_cairo/hdp.json";
+        inputs[4] = "build/hdp.json";
         bytes memory abiEncoded = vm.ffi(inputs);
         return abi.decode(abiEncoded, (bytes32));
-    }
-
-    function _callPreprocessCli(bytes memory encodedTask, bytes memory encodedDatalake) internal {
-        string[] memory inputs = new string[](4);
-        inputs[0] = "node";
-        inputs[1] = "./helpers/fetch_cairo_input.js";
-        inputs[2] = bytesToString(encodedTask);
-        inputs[3] = bytesToString(encodedDatalake);
-        vm.ffi(inputs);
     }
 
     function bytesToString(bytes memory _data) public pure returns (string memory) {

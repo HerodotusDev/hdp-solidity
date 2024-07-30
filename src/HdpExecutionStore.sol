@@ -1,24 +1,20 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
-import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
 import {MerkleProof} from "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 import {IFactsRegistry} from "./interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "./interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "./interfaces/IAggregatorsFactory.sol";
 
-import {BlockSampledDatalake, BlockSampledDatalakeCodecs} from "./datatypes/BlockSampledDatalakeCodecs.sol";
+import {BlockSampledDatalake, BlockSampledDatalakeCodecs} from "./datatypes/datalake/BlockSampledDatalakeCodecs.sol";
 import {
     TransactionsInBlockDatalake,
     TransactionsInBlockDatalakeCodecs
-} from "./datatypes/TransactionsInBlockDatalakeCodecs.sol";
-import {IterativeDynamicLayoutDatalake} from "./datatypes/IterativeDynamicLayoutDatalakeCodecs.sol";
-import {IterativeDynamicLayoutDatalakeCodecs} from "./datatypes/IterativeDynamicLayoutDatalakeCodecs.sol";
-import {ComputationalTask, ComputationalTaskCodecs} from "./datatypes/ComputationalTaskCodecs.sol";
+} from "./datatypes/datalake/TransactionsInBlockDatalakeCodecs.sol";
+import {ComputationalTask, ComputationalTaskCodecs} from "./datatypes/datalake/ComputeCodecs.sol";
+import {ModuleTask, ModuleCodecs} from "./datatypes/module/ModuleCodecs.sol";
 
-/// Caller is not authorized to perform the action
-error Unauthorized();
 /// Task is already registered
 error DoubleRegistration();
 /// Fact doesn't exist in the registry
@@ -29,14 +25,14 @@ error NotInBatch();
 error NotFinalized();
 
 /// @title HdpExecutionStore
-/// @author Herodotus Dev
+/// @author Herodotus Dev Ltd
 /// @notice A contract to store the execution results of HDP tasks
-contract HdpExecutionStore is AccessControl {
+contract HdpExecutionStore {
     using MerkleProof for bytes32[];
     using BlockSampledDatalakeCodecs for BlockSampledDatalake;
     using TransactionsInBlockDatalakeCodecs for TransactionsInBlockDatalake;
-    using IterativeDynamicLayoutDatalakeCodecs for IterativeDynamicLayoutDatalake;
     using ComputationalTaskCodecs for ComputationalTask;
+    using ModuleCodecs for ModuleTask;
 
     /// @notice The status of a task
     enum TaskStatus {
@@ -60,8 +56,8 @@ contract HdpExecutionStore is AccessControl {
     /// @notice emitted when a new task with transactions in block datalake is scheduled
     event TaskWithTransactionsInBlockDatalakeScheduled(TransactionsInBlockDatalake datalake, ComputationalTask task);
 
-    /// @notice constant representing role of operator
-    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+    /// @notice emitted when a new module task is scheduled
+    event ModuleTaskScheduled(ModuleTask moduleTask);
 
     /// @notice constant representing the pedersen hash of the Cairo HDP program
     bytes32 public immutable PROGRAM_HASH;
@@ -86,15 +82,6 @@ contract HdpExecutionStore is AccessControl {
         AGGREGATORS_FACTORY = aggregatorsFactory;
         PROGRAM_HASH = programHash;
         CHAIN_ID = block.chainid;
-
-        _setRoleAdmin(OPERATOR_ROLE, OPERATOR_ROLE);
-        _grantRole(OPERATOR_ROLE, _msgSender());
-    }
-
-    /// @notice Reverts if the caller is not an operator
-    modifier onlyOperator() {
-        if (!hasRole(OPERATOR_ROLE, _msgSender())) revert Unauthorized();
-        _;
     }
 
     /// @notice Caches the MMR root for a given MMR id
@@ -149,6 +136,22 @@ contract HdpExecutionStore is AccessControl {
         emit TaskWithTransactionsInBlockDatalakeScheduled(transactionsInBlockDatalake, computationalTask);
     }
 
+    /// @notice Requests the execution of a task with a module
+    /// @param moduleTask module task
+    function requestExecutionOfModuleTask(ModuleTask calldata moduleTask) external {
+        bytes32 taskCommitment = moduleTask.commit();
+
+        // Ensure task is not already scheduled
+        if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
+            revert DoubleRegistration();
+        }
+
+        // Store the task result
+        cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
+
+        emit ModuleTaskScheduled(moduleTask);
+    }
+
     /// @notice Authenticates the execution of a task is finalized
     ///     by verifying the FactRegistry and Merkle proofs
     /// @param mmrIds The id of the MMR used to compute task
@@ -172,7 +175,7 @@ contract HdpExecutionStore is AccessControl {
         bytes32[][] memory resultsInclusionProofs,
         bytes32[] calldata taskCommitments,
         bytes32[] calldata taskResults
-    ) external onlyOperator {
+    ) external {
         assert(mmrIds.length == mmrSizes.length);
 
         // Initialize an array of uint256 to store the program output

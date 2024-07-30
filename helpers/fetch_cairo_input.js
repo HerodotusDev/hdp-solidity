@@ -2,6 +2,7 @@ const { AbiCoder } = require("ethers");
 const { StandardMerkleTree } = require("@openzeppelin/merkle-tree") ;
 const bs_cached = require("./target/bs_cached_output.json");
 const tx_cached = require("./target/tx_cached_output.json");
+const md_cached = require("./target/md_cached_output.json");
 
 function padToBytes32(hexStr) {
     if (hexStr.startsWith("0x")) {
@@ -21,6 +22,8 @@ async function main() {
       cached = bs_cached;
     } else if (datalakeType === "tx") {
       cached = tx_cached;
+    } else if (datalakeType === "md") {
+      cached = md_cached;
     } else {
       process.exit(1);
     }

@@ -1,0 +1,23 @@
+{
+  "destinationChainId": 11155111,
+  "tasks": [
+    {
+      "type": "DatalakeCompute",
+      "datalake": {
+        "type": "BlockSampled",
+        "chainId": 11155111,
+        "blockRangeStart": 5858987,
+        "blockRangeEnd": 5858997,
+        "increment": 2,
+        "sampledProperty": "header.excess_blob_gas"
+      },
+      "compute": {
+        "aggregateFnId": "slr",
+        "aggregateFnCtx": {
+          "operator": "none",
+          "valueToCompare": "10000000"
+        }
+      }
+    }
+  ]
+}
