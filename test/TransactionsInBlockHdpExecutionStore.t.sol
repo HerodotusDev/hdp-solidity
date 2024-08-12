@@ -58,6 +58,7 @@ contract HdpExecutionStoreTest is Test {
 
     ERC1967Proxy public proxy;
     HdpExecutionStore private hdp;
+    HdpExecutionStore private hdpImplementation;
     IFactsRegistry private factsRegistry;
     IAggregatorsFactory private aggregatorsFactory;
     ISharpFactsAggregator private sharpFactsAggregator;
@@ -98,10 +99,13 @@ contract HdpExecutionStoreTest is Test {
 
         // Get program hash from compiled Cairo program
         programHash = _getProgramHash();
-        hdp = new HdpExecutionStore();
+        hdpImplementation = new HdpExecutionStore();
         proxy = new ERC1967Proxy(
-            address(hdp), abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, programHash))
+            address(hdpImplementation),
+            abi.encodeCall(HdpExecutionStore.initialize, (factsRegistry, aggregatorsFactory, programHash))
         );
+
+        hdp = HdpExecutionStore(address(proxy));
 
         emit log_bytes(abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, programHash)));
 
