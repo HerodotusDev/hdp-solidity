@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
+import {ERC1967Proxy} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
 import {IAggregatorsFactory} from "../src/interfaces/IAggregatorsFactory.sol";
@@ -43,12 +44,14 @@ contract MockSharpFactsAggregator is ISharpFactsAggregator {
 }
 
 contract HdpExecutionStoreTest is Test {
+    ERC1967Proxy public proxy;
+    HdpExecutionStore private hdpImplementation;
     HdpExecutionStore private hdp;
     IFactsRegistry private factsRegistry;
     IAggregatorsFactory private aggregatorsFactory;
     ISharpFactsAggregator private sharpFactsAggregator;
 
-    function testSetProgramHash() public {
+    function setUp() public {
         vm.chainId(11155111);
 
         // Registery for facts that has been processed through SHARP
@@ -56,18 +59,28 @@ contract HdpExecutionStoreTest is Test {
         // Factory for creating SHARP facts aggregators
         aggregatorsFactory = new MockAggregatorsFactory();
 
-        bytes32 oldPrgramHash = bytes32(uint256(1));
-        hdp = new HdpExecutionStore(factsRegistry, aggregatorsFactory, oldPrgramHash);
+        bytes32 oldProgramHash = bytes32(uint256(1));
+        hdpImplementation = new HdpExecutionStore();
+        proxy = new ERC1967Proxy(
+            address(hdpImplementation),
+            abi.encodeCall(HdpExecutionStore.initialize, (factsRegistry, aggregatorsFactory, oldProgramHash))
+        );
 
-        assertEq(hdp.PROGRAM_HASH(), oldPrgramHash);
+        hdp = HdpExecutionStore(address(proxy));
+    }
+
+    function testSetProgramHash() public {
+        bytes32 oldProgramHash = bytes32(uint256(1));
+        assertEq(hdp.getProgramHash(), oldProgramHash);
+
         bytes32 newProgramHash = bytes32(uint256(2));
 
         hdp.setProgramHash(newProgramHash);
-        assertEq(hdp.PROGRAM_HASH(), newProgramHash);
+        assertEq(hdp.getProgramHash(), newProgramHash);
 
         vm.prank(address(1));
         bytes32 malProgramHash = bytes32(uint256(3));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert();
         hdp.setProgramHash(malProgramHash);
     }
 }

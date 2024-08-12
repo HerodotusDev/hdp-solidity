@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
+import {ERC1967Proxy} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
 import {ModuleTask, ModuleCodecs} from "../src/datatypes/module/ModuleCodecs.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
@@ -49,7 +50,9 @@ contract HdpExecutionStoreTest is Test {
 
     address public proverAddress = address(12);
 
+    ERC1967Proxy public proxy;
     HdpExecutionStore private hdp;
+    HdpExecutionStore private hdpImplementation;
     IFactsRegistry private factsRegistry;
     IAggregatorsFactory private aggregatorsFactory;
     ISharpFactsAggregator private sharpFactsAggregator;
@@ -97,7 +100,15 @@ contract HdpExecutionStoreTest is Test {
 
         // Get program hash from compiled Cairo program
         programHash = _getProgramHash();
-        hdp = new HdpExecutionStore(factsRegistry, aggregatorsFactory, programHash);
+        hdpImplementation = new HdpExecutionStore();
+        proxy = new ERC1967Proxy(
+            address(hdpImplementation),
+            abi.encodeCall(HdpExecutionStore.initialize, (factsRegistry, aggregatorsFactory, programHash))
+        );
+
+        hdp = HdpExecutionStore(address(proxy));
+
+        emit log_bytes(abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, programHash)));
 
         // Parse from input file
         (
