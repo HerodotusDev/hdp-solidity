@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import {ERC1967Proxy} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -19,10 +19,7 @@ contract MockFactsRegistry is IFactsRegistry {
 contract MockAggregatorsFactory is IAggregatorsFactory {
     mapping(uint256 => ISharpFactsAggregator) public aggregatorsById;
 
-    function createAggregator(
-        uint256 id,
-        ISharpFactsAggregator aggregator
-    ) external {
+    function createAggregator(uint256 id, ISharpFactsAggregator aggregator) external {
         aggregatorsById[id] = aggregator;
     }
 }
@@ -37,13 +34,12 @@ contract MockSharpFactsAggregator is ISharpFactsAggregator {
     }
 
     function aggregatorState() external view returns (AggregatorState memory) {
-        return
-            AggregatorState({
-                poseidonMmrRoot: usedMmrRoot,
-                keccakMmrRoot: bytes32(0),
-                mmrSize: usedMmrSize,
-                continuableParentHash: bytes32(0)
-            });
+        return AggregatorState({
+            poseidonMmrRoot: usedMmrRoot,
+            keccakMmrRoot: bytes32(0),
+            mmrSize: usedMmrSize,
+            continuableParentHash: bytes32(0)
+        });
     }
 }
 
@@ -65,19 +61,10 @@ contract HdpExecutionStoreTest is Test {
         bytes32 oldPrgramHash = bytes32(uint256(1));
         hdp = new HdpExecutionStore();
         proxy = new ERC1967Proxy(
-            address(hdp),
-            abi.encodeCall(
-                hdp.initialize,
-                (factsRegistry, aggregatorsFactory, oldPrgramHash)
-            )
+            address(hdp), abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, oldPrgramHash))
         );
 
-        emit log_bytes(
-            abi.encodeCall(
-                hdp.initialize,
-                (factsRegistry, aggregatorsFactory, oldPrgramHash)
-            )
-        );
+        emit log_bytes(abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, oldPrgramHash)));
 
         assertEq(hdp.getProgramHash(), oldPrgramHash);
         bytes32 newProgramHash = bytes32(uint256(2));
