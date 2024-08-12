@@ -102,10 +102,6 @@ contract HdpExecutionStore is Initializable, UUPSUpgradeable, OwnableUpgradeable
         PROGRAM_HASH = programHash;
     }
 
-    function getProgramHash() external view returns (bytes32) {
-        return PROGRAM_HASH;
-    }
-
     /// @notice Caches the MMR root for a given MMR id
     /// @notice Get MMR size and root from the aggregator and cache it
     function cacheMmrRoot(uint256 mmrId) public {
