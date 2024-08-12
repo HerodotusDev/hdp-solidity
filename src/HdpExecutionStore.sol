@@ -18,7 +18,7 @@ import {ComputationalTask, ComputationalTaskCodecs} from "./datatypes/datalake/C
 import {ModuleTask, ModuleCodecs} from "./datatypes/module/ModuleCodecs.sol";
 
 /// Caller is not authorized to perform the action
-error Unauthorized();
+error Unauthorized(string message);
 /// Task is already registered
 error DoubleRegistration();
 /// Fact doesn't exist in the registry

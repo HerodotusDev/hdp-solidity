@@ -79,8 +79,8 @@ contract HdpExecutionStoreTest is Test {
         assertEq(hdp.getProgramHash(), newProgramHash);
 
         vm.prank(address(1));
-        // bytes32 malProgramHash = bytes32(uint256(3));
-        // vm.expectRevert("Ownable: caller is not the owner");
-        // hdp.setProgramHash(malProgramHash);
+        bytes32 malProgramHash = bytes32(uint256(3));
+        vm.expectRevert();
+        hdp.setProgramHash(malProgramHash);
     }
 }
