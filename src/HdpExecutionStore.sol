@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import {MerkleProof} from "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
-import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
 import {IFactsRegistry} from "./interfaces/IFactsRegistry.sol";
 import {ISharpFactsAggregator} from "./interfaces/ISharpFactsAggregator.sol";
 import {IAggregatorsFactory} from "./interfaces/IAggregatorsFactory.sol";
@@ -15,6 +15,8 @@ import {
 import {ComputationalTask, ComputationalTaskCodecs} from "./datatypes/datalake/ComputeCodecs.sol";
 import {ModuleTask, ModuleCodecs} from "./datatypes/module/ModuleCodecs.sol";
 
+/// Caller is not authorized to perform the action
+error Unauthorized();
 /// Task is already registered
 error DoubleRegistration();
 /// Fact doesn't exist in the registry
@@ -27,7 +29,7 @@ error NotFinalized();
 /// @title HdpExecutionStore
 /// @author Herodotus Dev Ltd
 /// @notice A contract to store the execution results of HDP tasks
-contract HdpExecutionStore is OwnableUpgradeable {
+contract HdpExecutionStore is AccessControl {
     using MerkleProof for bytes32[];
     using BlockSampledDatalakeCodecs for BlockSampledDatalake;
     using TransactionsInBlockDatalakeCodecs for TransactionsInBlockDatalake;
@@ -59,6 +61,9 @@ contract HdpExecutionStore is OwnableUpgradeable {
     /// @notice emitted when a new module task is scheduled
     event ModuleTaskScheduled(ModuleTask moduleTask);
 
+    /// @notice constant representing role of operator
+    bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+
     /// @notice constant representing the pedersen hash of the Cairo HDP program
     bytes32 public PROGRAM_HASH;
 
@@ -82,10 +87,19 @@ contract HdpExecutionStore is OwnableUpgradeable {
         AGGREGATORS_FACTORY = aggregatorsFactory;
         PROGRAM_HASH = programHash;
         CHAIN_ID = block.chainid;
+
+        _setRoleAdmin(OPERATOR_ROLE, OPERATOR_ROLE);
+        _grantRole(OPERATOR_ROLE, _msgSender());
+    }
+
+    /// @notice Reverts if the caller is not an operator
+    modifier onlyOperator() {
+        require(hasRole(OPERATOR_ROLE, _msgSender()), "Ownable: caller is not the owner");
+        _;
     }
 
     /// @notice Set the program hash for the HDP program
-    function setProgramHash(bytes32 programHash) external onlyOwner {
+    function setProgramHash(bytes32 programHash) external onlyOperator {
         PROGRAM_HASH = programHash;
     }
 
