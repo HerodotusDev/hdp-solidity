@@ -8,6 +8,7 @@ import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
 import {IAggregatorsFactory} from "../src/interfaces/IAggregatorsFactory.sol";
 import {ISharpFactsAggregator} from "../src/interfaces/ISharpFactsAggregator.sol";
 
+// Mock contracts (as defined in your previous test)
 contract MockFactsRegistry is IFactsRegistry {
     mapping(bytes32 => bool) public isValid;
 
@@ -43,23 +44,41 @@ contract MockSharpFactsAggregator is ISharpFactsAggregator {
     }
 }
 
-contract HdpExecutionStoreTest is Test {
+contract HdpExecutionStoreV2 is HdpExecutionStore {
+    function version() public pure returns (string memory) {
+        return "V2";
+    }
+}
+
+contract HdpExecutionStoreV3 is HdpExecutionStore {
+    function version() public pure returns (string memory) {
+        return "V3";
+    }
+}
+
+contract UpgradeableHdpExecutionStoreTest is Test {
     ERC1967Proxy public proxy;
     HdpExecutionStore private hdpImplementation;
     HdpExecutionStore private hdp;
+    HdpExecutionStoreV2 private hdpV2;
+    HdpExecutionStoreV3 private hdpV3;
     IFactsRegistry private factsRegistry;
     IAggregatorsFactory private aggregatorsFactory;
     ISharpFactsAggregator private sharpFactsAggregator;
 
+    address public owner;
+    address public user;
+    bytes32 oldProgramHash;
+
     function setUp() public {
+        owner = address(this);
+        user = address(0x1);
         vm.chainId(11155111);
 
-        // Registery for facts that has been processed through SHARP
         factsRegistry = new MockFactsRegistry();
-        // Factory for creating SHARP facts aggregators
         aggregatorsFactory = new MockAggregatorsFactory();
 
-        bytes32 oldProgramHash = bytes32(uint256(1));
+        oldProgramHash = bytes32(uint256(1));
         hdpImplementation = new HdpExecutionStore();
         proxy = new ERC1967Proxy(
             address(hdpImplementation),
@@ -69,18 +88,45 @@ contract HdpExecutionStoreTest is Test {
         hdp = HdpExecutionStore(address(proxy));
     }
 
+    function testUpgrade() public {
+        // Deploy V2
+        hdpV2 = new HdpExecutionStoreV2();
+
+        // owner can upgrade to V2
+        vm.prank(owner);
+        HdpExecutionStore(address(proxy)).upgradeToAndCall(address(hdpV2), "");
+
+        hdpV2 = HdpExecutionStoreV2(address(proxy));
+
+        // Test that state is preserved
+        assertEq(hdpV2.PROGRAM_HASH(), bytes32(uint256(1)));
+        assertEq(hdpV2.owner(), owner);
+
+        // Ensure only owner can call new function
+        hdpV3 = HdpExecutionStoreV3(address(proxy));
+        vm.prank(user);
+        vm.expectRevert();
+        HdpExecutionStore(address(proxy)).upgradeToAndCall(address(hdpV3), "");
+
+        // test version is still V2
+        assertEq(hdpV2.version(), "V2");
+    }
+
     function testSetProgramHash() public {
-        bytes32 oldProgramHash = bytes32(uint256(1));
-        assertEq(hdp.getProgramHash(), oldProgramHash);
+        assertEq(hdp.PROGRAM_HASH(), oldProgramHash);
 
         bytes32 newProgramHash = bytes32(uint256(2));
-
+        // successfully set new program hash
         hdp.setProgramHash(newProgramHash);
-        assertEq(hdp.getProgramHash(), newProgramHash);
+        assertEq(hdp.PROGRAM_HASH(), newProgramHash);
 
-        vm.prank(address(1));
+        // only owner can call `setProgramHash`
+        vm.prank(user);
         bytes32 malProgramHash = bytes32(uint256(3));
         vm.expectRevert();
         hdp.setProgramHash(malProgramHash);
+
+        // ensure same prorogram hash
+        assertEq(hdp.PROGRAM_HASH(), newProgramHash);
     }
 }
