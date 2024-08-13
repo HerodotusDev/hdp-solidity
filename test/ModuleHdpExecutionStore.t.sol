@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
+import {ERC1967Proxy} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {HdpExecutionStore} from "../src/HdpExecutionStore.sol";
 import {ModuleTask, ModuleCodecs} from "../src/datatypes/module/ModuleCodecs.sol";
 import {IFactsRegistry} from "../src/interfaces/IFactsRegistry.sol";
@@ -49,7 +50,9 @@ contract HdpExecutionStoreTest is Test {
 
     address public proverAddress = address(12);
 
+    ERC1967Proxy public proxy;
     HdpExecutionStore private hdp;
+    HdpExecutionStore private hdpImplementation;
     IFactsRegistry private factsRegistry;
     IAggregatorsFactory private aggregatorsFactory;
     ISharpFactsAggregator private sharpFactsAggregator;
@@ -71,11 +74,10 @@ contract HdpExecutionStoreTest is Test {
 
         // !! If want to fetch different input, modify helpers/target/bs_cached_input.json && helpers/target/bs_cached_output.json
         // !! And construct corresponding BlockSampledDatalake and ComputationalTask here
-        bytes32[] memory moduleInputs = new bytes32[](2);
-        moduleInputs[0] = bytes32(uint256(5382820));
-        assertEq(moduleInputs[0], bytes32(0x00000000000000000000000000000000000000000000000000000000005222a4));
-        moduleInputs[1] = bytes32(uint256(113007187165825507614120510246167695609561346261));
-        assertEq(moduleInputs[1], bytes32(0x00000000000000000000000013cb6ae34a13a0977f4d7101ebc24b87bb23f0d5));
+        bytes32[] memory moduleInputs = new bytes32[](1);
+        // private input cannot be send with contract
+        moduleInputs[0] = bytes32(uint256(113007187165825507614120510246167695609561346261));
+        assertEq(moduleInputs[0], bytes32(0x00000000000000000000000013cb6ae34a13a0977f4d7101ebc24b87bb23f0d5));
 
         ModuleTask memory moduleTask = ModuleTask({
             programHash: bytes32(0x064041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412),
@@ -97,7 +99,15 @@ contract HdpExecutionStoreTest is Test {
 
         // Get program hash from compiled Cairo program
         programHash = _getProgramHash();
-        hdp = new HdpExecutionStore(factsRegistry, aggregatorsFactory, programHash);
+        hdpImplementation = new HdpExecutionStore();
+        proxy = new ERC1967Proxy(
+            address(hdpImplementation),
+            abi.encodeCall(HdpExecutionStore.initialize, (factsRegistry, aggregatorsFactory, programHash))
+        );
+
+        hdp = HdpExecutionStore(address(proxy));
+
+        emit log_bytes(abi.encodeCall(hdp.initialize, (factsRegistry, aggregatorsFactory, programHash)));
 
         // Parse from input file
         (
