@@ -35,7 +35,9 @@ contract HdpLocalDeployer is Script {
             )
         );
 
-        console2.log("HdpExecutionStore proxy deployed at: ", address(proxy));
+        // Please dont remove. These are used to parse the contract addresses in hdp-server scripts
+        console2.log("MockedSharpFactsRegistry: ", factsRegistryAddress);
+        console2.log("HdpExecutionStore: ", address(proxy));
 
         vm.stopBroadcast();
     }
