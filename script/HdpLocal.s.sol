@@ -19,19 +19,12 @@ contract HdpLocalDeployer is Script {
         address factsRegistryAddress = address(factsRegistry);
 
         IFactsRegistry iFactsRegistry = IFactsRegistry(address(factsRegistry));
-        IAggregatorsFactory aggregatorsFactory = IAggregatorsFactory(
-            vm.envAddress("SHARP_AGGREGATORS_FACTORY")
-        );
+        IAggregatorsFactory aggregatorsFactory = IAggregatorsFactory(vm.envAddress("SHARP_AGGREGATORS_FACTORY"));
         HdpExecutionStore hdp = new HdpExecutionStore();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(hdp),
             abi.encodeCall(
-                HdpExecutionStore.initialize,
-                (
-                    iFactsRegistry,
-                    aggregatorsFactory,
-                    vm.envBytes32("HDP_PROGRAM_HASH")
-                )
+                HdpExecutionStore.initialize, (iFactsRegistry, aggregatorsFactory, vm.envBytes32("HDP_PROGRAM_HASH"))
             )
         );
 

@@ -41,18 +41,7 @@ library ComputationalTaskCodecs {
     /// @notice The commitment embeds the datalake commitment.
     /// @param task The ComputationalTask to commit.
     /// @param datalakeCommitment The commitment of the datalake.
-    function commit(
-        ComputationalTask memory task,
-        bytes32 datalakeCommitment
-    ) internal pure returns (bytes32) {
-        return
-            keccak256(
-                abi.encode(
-                    datalakeCommitment,
-                    task.aggregateFnId,
-                    task.operatorId,
-                    task.valueToCompare
-                )
-            );
+    function commit(ComputationalTask memory task, bytes32 datalakeCommitment) internal pure returns (bytes32) {
+        return keccak256(abi.encode(datalakeCommitment, task.aggregateFnId, task.operatorId, task.valueToCompare));
     }
 }
