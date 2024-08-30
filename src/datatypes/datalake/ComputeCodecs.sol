@@ -5,8 +5,8 @@ import {TaskCode} from "../Task.sol";
 
 /// @dev A ComputationalTask.
 /// @param AggregateFnId The aggregate function id.
-/// @param operator The operator to use (only COUNT).
-/// @param valueToCompare The value to compare (COUNT/SLR).
+/// @param operator The operator to use (COUNT).
+/// @param valueToCompare The value to compare (COUNT).
 /// The context is used to pass additional parameters to the aggregate function.
 struct ComputationalTask {
     AggregateFn aggregateFnId;
@@ -20,9 +20,7 @@ enum AggregateFn {
     SUM,
     MIN,
     MAX,
-    COUNT,
-    MERKLE,
-    SLR
+    COUNT
 }
 
 ///@notice Operators for COUNT.
@@ -43,7 +41,18 @@ library ComputationalTaskCodecs {
     /// @notice The commitment embeds the datalake commitment.
     /// @param task The ComputationalTask to commit.
     /// @param datalakeCommitment The commitment of the datalake.
-    function commit(ComputationalTask memory task, bytes32 datalakeCommitment) internal pure returns (bytes32) {
-        return keccak256(abi.encode(datalakeCommitment, task.aggregateFnId, task.operatorId, task.valueToCompare));
+    function commit(
+        ComputationalTask memory task,
+        bytes32 datalakeCommitment
+    ) internal pure returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    datalakeCommitment,
+                    task.aggregateFnId,
+                    task.operatorId,
+                    task.valueToCompare
+                )
+            );
     }
 }

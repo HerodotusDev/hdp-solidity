@@ -12,9 +12,9 @@
         "sampledProperty": "header.excess_blob_gas"
       },
       "compute": {
-        "aggregateFnId": "slr",
+        "aggregateFnId": "count",
         "aggregateFnCtx": {
-          "operator": "none",
+          "operator": "gt",
           "valueToCompare": "10000000"
         }
       }
