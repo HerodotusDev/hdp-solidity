@@ -60,8 +60,8 @@ BlockSampledDatalake datalake = BlockSampledDatalake({
 });
 
 ComputationalTask computationalTask = ComputationalTask({
-    aggregateFnId: AggregateFn.SLR,
-    operatorId: Operator.NONE,
+    aggregateFnId: AggregateFn.COUNT,
+    operatorId: Operator.GT,
     valueToCompare: uint256(10000000)
 });
 ```
@@ -84,7 +84,7 @@ TransactionsInBlockDatalake datalake = TransactionsInBlockDatalake({
 });
 
 ComputationalTask computationalTask =
-    ComputationalTask({aggregateFnId: AggregateFn.SLR, operatorId: Operator.NONE, valueToCompare: uint256(50)});
+    ComputationalTask({aggregateFnId: AggregateFn.COUNT, operatorId: Operator.GT, valueToCompare: uint256(50)});
 ```
 
 - Structure used for defining transactions included in the target block.

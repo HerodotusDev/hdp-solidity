@@ -19,9 +19,9 @@
         "sampledProperty": "tx_receipt.success"
       },
       "compute": {
-        "aggregateFnId": "slr",
+        "aggregateFnId": "count",
         "aggregateFnCtx": {
-          "operator": "none",
+          "operator": "lt",
           "valueToCompare": "50"
         }
       }

@@ -85,8 +85,8 @@ contract HdpExecutionStoreTest is Test {
     });
 
     ComputationalTask computationalTask = ComputationalTask({
-        aggregateFnId: AggregateFn.SLR,
-        operatorId: Operator.NONE,
+        aggregateFnId: AggregateFn.COUNT,
+        operatorId: Operator.GT,
         valueToCompare: uint256(10000000)
     });
 
@@ -134,6 +134,19 @@ contract HdpExecutionStoreTest is Test {
     }
 
     function testHdpExecutionFlow() public {
+        // ================================================
+        // 1. Request execution of task with block sampled datalake
+        // ================================================
+
+        hdp.requestExecutionOfTaskWithBlockSampledDatalake(datalake, computationalTask);
+        bytes32 computedDatalakeCommitment = datalake.commit();
+        bytes32 computedTaskCommitment = computationalTask.commit(computedDatalakeCommitment);
+        assertEq(uint256(HdpExecutionStore.TaskStatus.SCHEDULED), uint256(hdp.getTaskStatus(computedTaskCommitment)));
+
+        // ================================================
+        // 2. Execute task
+        // ================================================
+
         (uint256 taskRootLow, uint256 taskRootHigh) = Uint256Splitter.split128(uint256(bytes32(fetchedTasksMerkleRoot)));
 
         (uint256 resultRootLow, uint256 resultRootHigh) =
@@ -174,6 +187,13 @@ contract HdpExecutionStoreTest is Test {
         // Check if the task result is stored
         bytes32 taskResult = hdp.getFinalizedTaskResult(fetchedTasksCommitments[0]);
         assertEq(taskResult, fetchedResults[0]);
+
+        // ================================================
+        // 3. Request again and get as event
+        // ================================================
+
+        hdp.requestExecutionOfTaskWithBlockSampledDatalake(datalake, computationalTask);
+        assertEq(uint256(HdpExecutionStore.TaskStatus.FINALIZED), uint256(hdp.getTaskStatus(computedTaskCommitment)));
     }
 
     function _getProgramHash() internal returns (bytes32) {

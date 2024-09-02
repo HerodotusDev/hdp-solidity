@@ -5,8 +5,8 @@ import {TaskCode} from "../Task.sol";
 
 /// @dev A ComputationalTask.
 /// @param AggregateFnId The aggregate function id.
-/// @param operator The operator to use (only COUNT).
-/// @param valueToCompare The value to compare (COUNT/SLR).
+/// @param operator The operator to use (COUNT).
+/// @param valueToCompare The value to compare (COUNT).
 /// The context is used to pass additional parameters to the aggregate function.
 struct ComputationalTask {
     AggregateFn aggregateFnId;
@@ -20,9 +20,7 @@ enum AggregateFn {
     SUM,
     MIN,
     MAX,
-    COUNT,
-    MERKLE,
-    SLR
+    COUNT
 }
 
 ///@notice Operators for COUNT.

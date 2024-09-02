@@ -51,6 +51,9 @@ contract HdpExecutionStore is Initializable, UUPSUpgradeable, OwnableUpgradeable
         bytes32 result;
     }
 
+    /// @notice emitted when a task already stored
+    event TaskAlreadyStored(bytes32 result);
+
     /// @notice emitted when a new MMR root is cached
     event MmrRootCached(uint256 mmrId, uint256 mmrSize, bytes32 mmrRoot);
 
@@ -122,15 +125,19 @@ contract HdpExecutionStore is Initializable, UUPSUpgradeable, OwnableUpgradeable
         bytes32 datalakeCommitment = blockSampledDatalake.commit();
         bytes32 taskCommitment = computationalTask.commit(datalakeCommitment);
 
-        // Ensure task is not already scheduled
-        if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
-            revert DoubleRegistration();
+        if (cachedTasksResult[taskCommitment].status == TaskStatus.FINALIZED) {
+            emit TaskAlreadyStored(taskCommitment);
+        } else {
+            // Ensure task is not already scheduled
+            if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
+                revert DoubleRegistration();
+            }
+
+            // Store the task result
+            cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
+
+            emit TaskWithBlockSampledDatalakeScheduled(blockSampledDatalake, computationalTask);
         }
-
-        // Store the task result
-        cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
-
-        emit TaskWithBlockSampledDatalakeScheduled(blockSampledDatalake, computationalTask);
     }
 
     /// @notice Requests the execution of a task with a transactions in block datalake
@@ -143,15 +150,19 @@ contract HdpExecutionStore is Initializable, UUPSUpgradeable, OwnableUpgradeable
         bytes32 datalakeCommitment = transactionsInBlockDatalake.commit();
         bytes32 taskCommitment = computationalTask.commit(datalakeCommitment);
 
-        // Ensure task is not already scheduled
-        if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
-            revert DoubleRegistration();
+        if (cachedTasksResult[taskCommitment].status == TaskStatus.FINALIZED) {
+            emit TaskAlreadyStored(taskCommitment);
+        } else {
+            if (
+                cachedTasksResult[taskCommitment].status != TaskStatus.NONE // Ensure task is not already scheduled
+            ) {
+                revert DoubleRegistration();
+            }
+            // Store the task result
+            cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
+
+            emit TaskWithTransactionsInBlockDatalakeScheduled(transactionsInBlockDatalake, computationalTask);
         }
-
-        // Store the task result
-        cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
-
-        emit TaskWithTransactionsInBlockDatalakeScheduled(transactionsInBlockDatalake, computationalTask);
     }
 
     /// @notice Requests the execution of a task with a module
@@ -159,15 +170,19 @@ contract HdpExecutionStore is Initializable, UUPSUpgradeable, OwnableUpgradeable
     function requestExecutionOfModuleTask(ModuleTask calldata moduleTask) external {
         bytes32 taskCommitment = moduleTask.commit();
 
-        // Ensure task is not already scheduled
-        if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
-            revert DoubleRegistration();
+        if (cachedTasksResult[taskCommitment].status == TaskStatus.FINALIZED) {
+            emit TaskAlreadyStored(taskCommitment);
+        } else {
+            // Ensure task is not already scheduled
+            if (cachedTasksResult[taskCommitment].status != TaskStatus.NONE) {
+                revert DoubleRegistration();
+            }
+
+            // Store the task result
+            cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
+
+            emit ModuleTaskScheduled(moduleTask);
         }
-
-        // Store the task result
-        cachedTasksResult[taskCommitment] = TaskResult({status: TaskStatus.SCHEDULED, result: ""});
-
-        emit ModuleTaskScheduled(moduleTask);
     }
 
     /// @notice Authenticates the execution of a task is finalized

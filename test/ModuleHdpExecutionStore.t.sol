@@ -69,6 +69,8 @@ contract HdpExecutionStoreTest is Test {
     bytes32[] fetchedResults;
     bytes32[] fetchedTasksCommitments;
 
+    ModuleTask moduleTask;
+
     function setUp() public {
         vm.chainId(11155111);
 
@@ -79,7 +81,7 @@ contract HdpExecutionStoreTest is Test {
         moduleInputs[0] = bytes32(uint256(113007187165825507614120510246167695609561346261));
         assertEq(moduleInputs[0], bytes32(0x00000000000000000000000013cb6ae34a13a0977f4d7101ebc24b87bb23f0d5));
 
-        ModuleTask memory moduleTask = ModuleTask({
+        moduleTask = ModuleTask({
             programHash: bytes32(0x064041a339b1edd10de83cf031cfa938645450f971d2527c90d4c2ce68d7d412),
             inputs: moduleInputs
         });
@@ -134,6 +136,19 @@ contract HdpExecutionStoreTest is Test {
     }
 
     function testHdpExecutionFlow() public {
+        // ================================================
+        // 1. Request execution of task with block sampled datalake
+        // ================================================
+
+        hdp.requestExecutionOfModuleTask(moduleTask);
+        bytes32 moduleTaskCommitment = moduleTask.commit();
+
+        assertEq(uint256(HdpExecutionStore.TaskStatus.SCHEDULED), uint256(hdp.getTaskStatus(moduleTaskCommitment)));
+
+        // ================================================
+        // 2. Execute task
+        // ================================================
+
         (uint256 taskRootLow, uint256 taskRootHigh) = Uint256Splitter.split128(uint256(bytes32(fetchedTasksMerkleRoot)));
 
         (uint256 resultRootLow, uint256 resultRootHigh) =
@@ -174,6 +189,13 @@ contract HdpExecutionStoreTest is Test {
         // Check if the task result is stored
         bytes32 taskResult = hdp.getFinalizedTaskResult(fetchedTasksCommitments[0]);
         assertEq(taskResult, fetchedResults[0]);
+
+        // ================================================
+        // 3. Request again and get as event
+        // ================================================
+
+        hdp.requestExecutionOfModuleTask(moduleTask);
+        assertEq(uint256(HdpExecutionStore.TaskStatus.FINALIZED), uint256(hdp.getTaskStatus(moduleTaskCommitment)));
     }
 
     function _getProgramHash() internal returns (bytes32) {
