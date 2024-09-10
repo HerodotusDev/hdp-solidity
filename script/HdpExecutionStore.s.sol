@@ -24,7 +24,7 @@ contract HdpExecutionStoreDeployer is Script {
             )
         );
 
-        console2.log("HdpExecutionStore proxy deployed at: ", address(proxy));
+        console2.log("HdpExecutionStore: ", address(proxy));
 
         vm.stopBroadcast();
     }
